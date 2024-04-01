@@ -48,6 +48,9 @@ to model this application with classes. This assignment also relies heavily on [
 The main data input for the program is either a single _file name_ of a C/C++ program or a _directory_ containing C/C++ source files.
 Feel free to add support to other languages if you so desire.
 
+Other input information are the options to select which type of sorting order you will use to present the data table, or if the user
+wants to investigate the directory recursively.
+
 ## Interface
 
 If you run `sloc` with no arguments, or with the flag `--help` or `-h` the program should display the _usage_ message to help the client to understand how to use the program.
@@ -87,6 +90,18 @@ In summary, your program should:
 2. for each file in the list, count the individual lines of code,
    comments, and blank lines, store this information in a convenient data structure, and;
 3. display the result of the counting into a single table, with information associated with each individual file.
+
+Note that the display of the information inside the table should be sorted in ascending order according to the field the user requested.
+The possibilities are:
+
+- option `-s f`: sort data in ascending order by file name.
+- option `-s t`: sort data in ascending order by file type.
+- option `-s c`: sort data in ascending order by number of comment lines.
+- option `-s b`: sort data in ascending order by number of blank lines.
+- option `-s s`: sort data in ascending order by number of sloc lines.
+- option `-s a`: sort data in ascending order by number of all lines.
+
+To sort the table in reverse order the user must replace `-s` by `-S` and with the same arguments described above.
 
 ### Single line of code, comments, and blank lines
 
