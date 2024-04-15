@@ -1,45 +1,51 @@
 ﻿# Introduction
 
-<!-- TODO -->
+O programa "sloc" ou Single Line of Code, como preferir chamá-lo, é uma útil ferramenta para métrica padrão de software usada para medir o tamanho de um programa de computador. Essas informações podem ser usadas, por exemplo, para medir objetivamente o esforço de programação feito por uma equipe de desenvolvedores, bem como para estimar as práticas de documentação de software calculando a porcentagem de comentários em um determinado projeto. O presente "sloc" tem suporte para a linguagem C/C++, recebendo um arquivo ou arquivos do diretório raiz (ainda teremos uma atualização para buscar mais arquivos),
+e retornando seu nome, linguagem (C ou C++), linhas de comentário, linhas em branco e linhas de código, bem como sua soma. 
 
-Breve descrição do projeto.
+**Funcionalidades Principais**
 
-# Author(s)
+- Estatísticas Detalhadas: Para cada arquivo analisado, o slocpp calcula o número de linhas de código, comentários e linhas em branco. Ele fornece uma visão detalhada dessas estatísticas, permitindo uma compreensão abrangente da estrutura e complexidade do código.
 
-<!-- TODO -->
+- Opções de Ordenação: O programa oferece opções para ordenar os resultados com base em diferentes critérios, como nome do arquivo, tipo de arquivo, número de comentários, número de linhas em branco e número total de linhas de código. Isso permite aos usuários visualizar os resultados de forma mais organizada e relevante para suas necessidades.
 
-Indique o nome do(s) autor(es) e email(s).
+
+# Author(s) 
+
+**Ryan David dos Santos Silvestre**
+_ryan.silvestre.718@ufrn.edu.br_
+
 
 # Problems found or limitations
 
-<!-- TODO -->
-
-Lista aqui os problemas encontrados (se houve algum) e as possíveis limitações do programa.
+**Limitações:**
+Como limitação principal, o "sloc" carece de uma recursão em diretório, o que indica que ele não consegue verificar arquivos fora da pasta raiz.
+Outrossim, caso o usuário o mova para outras pastas, o funcionamento se dá de maneira perfeita.
 
 # Grading
 
-<!-- TODO -->
-
-Preencha os itens que você implementou, indicando qual a nota esperada para cada item.
-
 | Item                                                | Valor máximo | Valor esperado |
 | --------------------------------------------------- | :----------: | :------------: |
-| Read a single source file                           |      10      |       ??       |
-| Read a list of files from a directory               |      15      |       ??       |
-| Show help as requested `-h`                         |      4       |       ??       |
-| Treat error situations                              |      8       |       ??       |
-| Show correct number of blank lines                  |      5       |       ??       |
-| Show correct number of comment lines                |      10      |       ??       |
-| Show correct number of code lines                   |      10      |       ??       |
-| Show correct number of total lines                  |      5       |       ??       |
-| Show the type of source file                        |      5       |       ??       |
-| Show percentages as requested                       |      10      |       ??       |
-| Show consolidation at the bottom of a table         |      5       |       ??       |
-| Table is formatted as requested                     |      8       |       ??       |
-| The project contains at least one struct or classes |      5       |       ??       |
+| Read a single source file                           |      10      |       10       |
+| Read a list of files from a directory               |      15      |       6       |
+| Show help as requested `-h`                         |      4       |       4       |
+| Treat error situations                              |      8       |       8       |
+| Show correct number of blank lines                  |      5       |       5       |
+| Show correct number of comment lines                |      10      |       10       |
+| Show correct number of code lines                   |      10      |       10       |
+| Show correct number of total lines                  |      5       |       5       |
+| Show the type of source file                        |      5       |       5       |
+| Show percentages as requested                       |      10      |       10       |
+| Show consolidation at the bottom of a table         |      5       |       5       |
+| Table is formatted as requested                     |      8       |       8       |
+| The project contains at least one struct or classes |      5       |       5       |
 
 # Compiling and Runnig
 
-<!-- TODO -->
+A compilação pode ser feita da seguinte maneira:
 
-Indique aqui como compilar e executar seu programa, caso você não esteja usando `cmake`.
+_"g++ -o sloc main.cpp"_ -- sendo _"g++"_ o compilador, _"sloc"_ o nome do executável (pode ser o nome de sua preferência) e
+_"main.cpp"_ o arquivo fonte C++.
+
+Para "rodar" o programa, coloque o arquivo/diretório após o nome do seu executável, seguindo as instruções.
+

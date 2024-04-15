@@ -1,107 +1,180 @@
-/*!
- * @file main.cpp
- * @description
- * This program implements a single line of code count for C/C++ programs.
- * @author	Add your name here
- * @date	September, 9th 2024.
- * @remark On 2022-09-9 changed ...
- */
-#include <cstdlib>
-#include <dirent.h>
-#include <fstream>
-#include <map>
-#include <utility>
-#include <vector>
-using std::map;
+#include <iostream>
+#include <cstring>
 #include <string>
-using std::string;
+#include <sstream>
+#include <algorithm>
+#include <vector>
+#include "file_class.hpp"
+#include "slocProcessor.hpp"
+#include <dirent.h>
+#include <sys/stat.h>
 
-//== Enumerations
+int main(int argc, char* argv[]){
 
-/// This enumeration lists all the supported languages.
-enum lang_type_e {
-  C = 0, //!< C language
-  CPP,   //!< C++ language
-  H,     //!< C/C++ header
-  HPP,   //!< C++ header
-  UNDEF, //!< Undefined type.
-};
+/*--------------------------------------------------------------------------------------------------------------*/
+    
+    std::ostringstream Header;
 
-//== Class/Struct declaration
+    std::string line = "\n-----------------------------------------------------------------------------------------\n";
+    std::string slocArt = R"(
+                             ___ _    ___   ___       _ 
+                            / __| |  / _ \ / __| __ _/ |
+                            \__ \ |_| (_) | (__  \ V / |
+                            |___/____\___/ \___|(_)_/|_|
+                                  
+    )";
 
-/// Integer type for counting lines.
-using count_t = unsigned long;
-/// Stores the file information we are collecting.
-class FileInfo {
-public:
-  string filename;    //!< the filename.
-  lang_type_e type;   //!< the language type.
-  count_t n_blank;    //!< # of blank lines in the file.
-  count_t n_comments; //!< # of comment lines.
-  count_t n_loc;      //!< # lines of code.
-  count_t n_lines;    //!< # of lines.
+    Header << line << slocArt << "              Welcome to slocpp, version 1.0,(c) 2024 Selan, DIMAp" << "\n" <<line;
 
-  /// Ctro.
-  FileInfo(string fn = "", lang_type_e t = UNDEF, count_t nb = 0,
-           count_t nc = 0, count_t nl = 0, count_t ni = 0)
-      : filename{std::move(fn)}, type{t}, n_blank{nb}, n_comments{nc},
-        n_loc{nl}, n_lines{ni} {
-    /* empty*/
-  }
-};
+    std::string slocHeader = Header.str(); 
 
-/// The running options provided via CLI.
-struct RunningOpt {
-  string input_name; //!< This might be a filename or a directory.
-  // TODO: add other running options here.
-};
+/*--------------------------------------------------------------------------------------------------------------*/
+    std::cout << slocHeader;
 
-//== Aux functions
+    char sortOrder = 's', sortMode = 'f';   
+    std::string caminhoRecebido; 
 
-// trim from left
-inline std::string ltrim(const std::string &s, const char *t = " \t\n\r\f\v") {
-  std::string clone{s};
-  clone.erase(0, clone.find_first_not_of(t));
-  return clone;
-}
-// trim from right
-inline std::string rtrim(const std::string &s, const char *t = " \t\n\r\f\v") {
-  // TODO
-  return s;
-}
-// trim from left & right
-inline std::string trim(const std::string &s, const char *t = " \t\n\r\f\v") {
-  // TODO
-  return s;
-}
+    std::string helpMessage = "\nUsage: sloc files/directory [options]\nOptions:\n-h/--help       Display this information.\n-s f/t/c/b/s/a  Sort table in ascending order by(f)ilename,(t) filetype,\n(c)omments,(b)lank lines,(s)loc, or(a)ll. Default is to show\nfiles in ordem of appearance.\n-S f/t/c/b/s/a  Same as above, but in descending order.\n";
 
-/// Returns true if file exists and can be opened.
-bool file_exists(const string &str) {
-  std::ifstream fs{str};
-  return fs.is_open();
-}
+    try{
+        if(argc == 1){
+            std::cerr << helpMessage << std::endl;
+            return 1;
+        }
 
-//== Main entry
+        if(argc == 2){
+            caminhoRecebido = argv[1];
+            struct stat fileInfo;
 
-int main(int argc, char *argv[]) {
-  // RunningOpt runop = parse_cmd_line(argc, argv);
-  // auto src_files = list_of_src_files(runop.input_name);
-  // auto database = count_lines(src_files);
-  // show_info(database);
+            if(caminhoRecebido == "--help" || caminhoRecebido == "-h"){std::cout << helpMessage << std::endl;exit;}
+            else if(stat(caminhoRecebido.c_str(), &fileInfo) != 0){throw std::runtime_error("\n[Error]:\n Unfortunately, I couldn't obtaining information about the file or directory.");}
+            else if(S_ISDIR(fileInfo.st_mode)){std::cerr << "\n[Error]:\nSorting order field missing. Here goes a tip:\n" << helpMessage << std::endl;return 1;}
+            else{
+                std::string caminhoRecebido = argv[1];
+                struct stat fileInfo;
+                if(stat(caminhoRecebido.c_str(), &fileInfo) != 0){
+                    throw std::runtime_error("\n[Error]:\n Unfortunately, I couldn't obtaining information about the file or directory.");
+                }
+                else{
+                    std::cout << "\nFiles processed: 1\n" << std::endl;
+                    FileInfo fileReceiver = slocProcessor(caminhoRecebido);
+                    std::cout << "-----------------------------------------------------------------------------------------\n" << "Filename            Language        Comments        Blank           Code            All\n" << "-----------------------------------------------------------------------------------------\n";
+                    printLine(fileReceiver);
+                }
+            }
+        }
 
-  std::vector<FileInfo> db;
+        else if(argc == 3){
+            caminhoRecebido = argv[1];
+            struct stat fileInfo;
+            
+            if(stat(caminhoRecebido.c_str(),&fileInfo) != 0){throw std::runtime_error("\n[Error]:\n Unfortunately, I couldn't obtaining information about the file or directory.");}
+            if(!S_ISDIR(fileInfo.st_mode)){std::cerr << "\n[Error]:\nThe path that you insert isn't a directory." << helpMessage << std::endl; return 1;}
 
-  FileInfo fc;
-  fc.filename = "test.cpp";
-  fc.type = CPP;
-  fc.n_comments = 4;
-  fc.n_blank = 5;
-  fc.n_loc = 15;
-  fc.n_lines = 20;
+            else{
+                if(std::strcmp(argv[2], "-S") == 0 || std::strcmp(argv[2], "-s") == 0){std::cerr << "\n[Tip]:\nUh... I guess you're missing the sort field, lil bro/sis. Try it:\n" << helpMessage << std::endl;}
+                else{std::cerr << "\n[Tip]:\nwhoa, whoa, lil bro/sis! That's invalid usage!\nTry it:" << helpMessage << std::endl;}
+            }
+        }
 
-  db.push_back(fc);
+        else if(argc == 4){
+            caminhoRecebido = argv[1];
+            struct stat fileInfo;
+            
+            if(stat(caminhoRecebido.c_str(), &fileInfo) != 0){throw std::runtime_error("\n[Error]:\n Unfortunately, I couldn't obtaining information about the file or directory.");}
+            
+            if(!S_ISDIR(fileInfo.st_mode)){std::cerr << "\n[Tip]:\nwhoa, whoa, lil bro/sis! That's invalid usage!\nTry it:" << helpMessage << std::endl; exit;}
 
-  db.emplace_back("test.cpp", CPP, 3, 10, 15, 18);
+            else{
+                if(std::strcmp(argv[2], "-s") == 0){
 
-  return EXIT_SUCCESS;
+                    sortOrder = 's';
+                    switch(argv[3][0]){
+                    case 'f':
+                        sortMode = 'f'; break;
+                    case 't':
+                        sortMode = 't'; break;
+                    case 'c':
+                        sortMode = 'c'; break;
+                    case 'b':
+                        sortMode = 'b'; break;
+                    case 's': 
+                        sortMode = 's'; break;
+                    case 'a':
+                        sortMode = 'a'; break;
+                    default:
+                        std::cerr << "\n[Tip]:\nwhoa, whoa, lil bro/sis! That's invalid sort mode!\n" << helpMessage << std::endl;
+                        return 1;
+                    }
+                }
+                else if(std::strcmp(argv[2], "-S") == 0){
+
+                    sortOrder = 'S';
+                    switch(argv[3][0]){
+                    case 'f':
+                        sortMode = 'f'; break;
+                    case 't':
+                        sortMode = 't'; break;
+                    case 'c':
+                        sortMode = 'c'; break;
+                    case 'b':
+                        sortMode = 'b'; break;
+                    case 's': 
+                        sortMode = 's'; break;
+                    case 'a':
+                        sortMode = 'a'; break;
+                    default:
+                        std::cerr << "\n[Tip]:\n whoa, whoa, lil bro/sis! That's invalid sort mode!\n" << helpMessage << std::endl;
+                        return 1;
+                    }
+                }
+            }
+
+            std::vector<std::string> Archives = directoryOpening(caminhoRecebido);
+            std::vector<FileInfo>readArchives;
+            if(Archives.empty()){std::cout << "\n[Error]:\nOh no! We couldn't find \".c /.h\" or \".cpp/.hpp\" archives. So sorry." << std::endl;} 
+            else{
+                for(const auto& arquivo : Archives){
+                    FileInfo arquivoAtual = slocProcessor(arquivo);
+                    readArchives.push_back(arquivoAtual);
+                }
+            }
+
+            if(sortOrder == 's'){
+                if(sortMode == 'f'){std::sort(readArchives.begin(), readArchives.end(), sortingFileName);} 
+                else if(sortMode == 't'){std::sort(readArchives.begin(), readArchives.end(), sortingFileType);} 
+                else if(sortMode == 'c'){std::sort(readArchives.begin(), readArchives.end(), sortingCommentLines);} 
+                else if(sortMode == 'b'){std::sort(readArchives.begin(), readArchives.end(), sortingBlankLines);} 
+                else if(sortMode == 's'){std::sort(readArchives.begin(), readArchives.end(), sortingCodeLines);} 
+                else if(sortMode == 'a'){std::sort(readArchives.begin(), readArchives.end(), sortingAllLines);}
+
+            }
+            else if(sortOrder == 'S'){
+                if(sortMode == 'f'){std::sort(readArchives.begin(), readArchives.end(), reverseSortingFileName);} 
+                else if(sortMode == 't'){std::sort(readArchives.begin(), readArchives.end(), reverseSortingFileType);} 
+                else if(sortMode == 'c'){std::sort(readArchives.begin(), readArchives.end(), reverseSortingCommentLines);} 
+                else if(sortMode == 'b'){std::sort(readArchives.begin(), readArchives.end(), reverseSortingBlankLines);} 
+                else if(sortMode == 's'){std::sort(readArchives.begin(), readArchives.end(), reverseSortingCodeLines);} 
+                else if(sortMode == 'a'){std::sort(readArchives.begin(), readArchives.end(), reverseSortingAllLines);}
+            }
+
+            short totalComment = 0, totalBlank = 0, totalCode = 0;
+            std::cout << "Files processed: " << readArchives.size() << std::endl;
+            std::cout << "-----------------------------------------------------------------------------------------\n" << "Filename            Language        Comments        Blank           Code            All\n" << "-----------------------------------------------------------------------------------------\n";
+            for(const auto& arquivo : readArchives){
+                totalComment += arquivo.commentLines;
+                totalBlank += arquivo.blankLines;
+                totalCode += arquivo.codeLines;
+                printLine(arquivo);
+            }
+            std::cout << "-----------------------------------------------------------------------------------------\n" << "SUM                                  " << totalComment << "             " << totalBlank << "              " << totalCode << "             " << totalBlank+totalCode+totalComment << std::endl;
+            std::cout << "-----------------------------------------------------------------------------------------\n";
+
+        }
+
+        return 0;
+    } catch(const std::exception& e){
+        std::cerr << "WHOA! An error occurred: " << e.what() << std::endl;
+        return 1;
+    }
 }
