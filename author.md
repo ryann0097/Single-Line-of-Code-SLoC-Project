@@ -13,32 +13,12 @@ e retornando seu nome, linguagem (C ou C++), linhas de comentário, linhas em br
 # Author(s) 
 
 **Ryan David dos Santos Silvestre**
-_ryan.silvestre.718@ufrn.edu.br_
-
 
 # Problems found or limitations
 
 **Limitações:**
 Como limitação principal, o "sloc" carece de uma recursão em diretório, o que indica que ele não consegue verificar arquivos fora da pasta raiz.
 Outrossim, caso o usuário o mova para outras pastas, o funcionamento se dá de maneira perfeita.
-
-# Grading
-
-| Item                                                | Valor máximo | Valor esperado |
-| --------------------------------------------------- | :----------: | :------------: |
-| Read a single source file                           |      10      |       10       |
-| Read a list of files from a directory               |      15      |       6       |
-| Show help as requested `-h`                         |      4       |       4       |
-| Treat error situations                              |      8       |       8       |
-| Show correct number of blank lines                  |      5       |       5       |
-| Show correct number of comment lines                |      10      |       10       |
-| Show correct number of code lines                   |      10      |       10       |
-| Show correct number of total lines                  |      5       |       5       |
-| Show the type of source file                        |      5       |       5       |
-| Show percentages as requested                       |      10      |       10       |
-| Show consolidation at the bottom of a table         |      5       |       5       |
-| Table is formatted as requested                     |      8       |       8       |
-| The project contains at least one struct or classes |      5       |       5       |
 
 # Compiling and Runnig
 
